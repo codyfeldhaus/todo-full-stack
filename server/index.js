@@ -1,10 +1,14 @@
+//require and configure dotenv
+require('dotenv').config();
+
 //require express and CORS and jsonwebtoken
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 
-//require and configure dotenv
-require('dotenv').config();
+//require middleware
+const authMiddleware = require('./middleware/authMiddleware');
+const reqLogMiddleware = require('./middleware/reqLogMiddleware');
 
 //load and store our JWT secret key
 const secretKey = process.env.JWT_SECRET;
@@ -16,16 +20,18 @@ const app = express();
 //CORS middleware
 app.use(cors());
 
-//request logging middleware
-app.use((req, res, next) => {
-  //Examples: req.method: get, post, put, delete, req.url: /api/users
-  console.log(`${req.method} request was sent to ${req.url}`);
-  //next() is a function that we call to move on to the next middleware
-  next();
-})
-
 //JSON parsing middleware
 app.use(express.json());
+
+//request logging middleware
+app.use(reqLogMiddleware);
+
+//protect route with authMiddleware by applying it to the /todos route
+//request passes through the authMiddleware, and if authentication succeeds,
+//authMiddleware then allows the request to continue to the appropriate handler
+//it auth fails, authMiddleware sends the response with an error status message
+//and the request/response chain stops there
+app.use('/todos', authMiddleware);
 
 //create local storage array for todos
 let todos = [{id: 1, task: "wash dishes"}];
