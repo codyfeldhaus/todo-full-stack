@@ -16,6 +16,8 @@ const authMiddleware = (req, res, next) => {
     //verify the token using the jsonwebtoken library's 'verify' method
     //which checks if the token is valid and not expired
     jwt.verify(token, secretKey, (err, decoded) => {
+      console.log("token:", token);
+      console.log("decoded:", decoded);
       //if the token verification fails (invalid, expired, etc.) send a 403 (unauthorized) status
       if (err) {
         return res.status(403).send("Unauthorized");
