@@ -2,8 +2,18 @@
 //require express
 const express = require('express');
 
+const { Pool } = require('pg');
+
 //initialize an express router
 const router = express.Router();
+
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'todo_full_stack',
+  password: process.env.DB_PASSWORD,
+  port: 5433
+})
 
 //create local storage array for todos
 //in a "real" app, would be replaced with a database
@@ -16,9 +26,10 @@ let todos = [{id: 1, task: "wash dishes"}];
 //leave out the initial /todos as it is already inferred
 //ie, if we did '/todos' here as well, then that would mean 
 //the actual route being handled is '/todos/todos'
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  const { rows } = await pool.query('SELECT * FROM todos');
   //sends back todos in JSON format
-  res.json(todos);
+  res.json(rows);
 })
 
 //create a post handler that is used for adding a new todo to the todos array
