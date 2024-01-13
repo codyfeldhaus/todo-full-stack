@@ -10,6 +10,7 @@ const authMiddleware = require('./middleware/authMiddleware');
 const reqLogMiddleware = require('./middleware/reqLogMiddleware');
 
 //require routes
+const regRoutes = require('./routes/regRoutes');
 const authRoutes = require('./routes/authRoutes');
 const todoRoutes = require('./routes/todoRoutes');
 
@@ -25,6 +26,9 @@ app.use(express.json());
 
 //request logging middleware
 app.use(reqLogMiddleware);
+
+//connect the registration route handler
+app.use('/register', regRoutes);
 
 //connect the login route handlers
 app.use('/login', authRoutes);

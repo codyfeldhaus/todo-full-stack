@@ -15,12 +15,6 @@ const pool = new Pool({
   port: 5433
 })
 
-//create local storage array for todos
-//in a "real" app, would be replaced with a database
-//eg: might still want a todos array, but will create
-//it by querying your database
-let todos = [{id: 1, task: "wash dishes"}];
-
 //HTTP Handlers related to todo data
 //create a get handler to the path /todos that sends back the todos
 //leave out the initial /todos as it is already inferred

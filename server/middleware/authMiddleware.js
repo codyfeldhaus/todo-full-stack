@@ -1,5 +1,6 @@
 //require jsonwebtoken package
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 //load and store our JWT secret key
 const secretKey = process.env.JWT_SECRET;
@@ -8,7 +9,8 @@ const secretKey = process.env.JWT_SECRET;
 //make function separately, and then pass to app.use
 const authMiddleware = (req, res, next) => {
   //extract the token the "Authorization" header of the incoming request
-  const token = req.headers['authorization'];
+  const authHeader = req.headers['authorization'];
+  const token = authHeader ? authHeader.split(" ")[1] : null;
 
   //checks if the token exists
   if (token) {
