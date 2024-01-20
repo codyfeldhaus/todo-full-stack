@@ -40,8 +40,8 @@ app.use('/login', authRoutes);
 //and the request/response chain stops there
 app.use('/todos', authMiddleware, todoRoutes); //now routes are in separate file
 
-//define a port
-const PORT = 3001;
+//define a port using an environment variable, default to 3001 if no env variable available
+const PORT = process.env.PORT || 3001;
 //tell the app to listen at that port
 app.listen(PORT, () => {
   console.log(`Server running on port: ${PORT}`);

@@ -25,17 +25,29 @@ router.post('/', async (req, res) => {
 
   //validate user input (for now, make sure none of the fields were empty)
   if (!username || !email || !password) {
-    res.status(400).send('Please provide a value for each field: username, email, password');
+    res.status(400).json({
+      "error": "Bad request",
+      "message": 'Please provide a value for each field: username, email, password'
+    });
   }
 
   //check if username already exists
   try {
+    //query db for rows that match username
     const { rows } = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     if (rows.length > 0) {
-      res.status(400).send('Username already in use. Please choose another.');
+      //if results are found for the query, the username is already in our db
+      res.status(400).json({
+          "error": "Duplicate User",
+          "message": "Username already in use. Please choose another."
+      });
     }
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).json({
+      "error": error.message,
+      "message": "A database error occurred. Please try again later."
+
+    });
   }
 
   //check if email already exists

@@ -24,24 +24,33 @@ router.get('/', async (req, res) => {
   const { rows } = await pool.query('SELECT * FROM todos');
   //sends back todos in JSON format
   res.json(rows);
+  // console.log(rows[0].reg_time)
+  // const time = new Date(rows[0].reg_time);
+  // console.log(time.getMinutes());
 })
 
-//create a post handler that is used for adding a new todo to the todos array
+//create a post handler that is used for adding a new task to the todos table
 //don't forget to create a new id for the todo
-router.post('/', (req, res) => {
-  //create new todo object from the request and store in a variable
-  //be sure to add in an id
-  const newTodo = { id: Date.now(), ...req.body }
-  //add the new todo to the todos array
-  todos.push(newTodo);
-  //send back a 201 status code along with the new todo
-  res.status(201).json(newTodo);
+router.post('/', async (req, res) => {
+  //extract data from the body of the request
+  const { user_id, task } = req.body;
+
+  try {
+    //try inserting the new task into the todos table
+    await pool.query('INSERT INTO todos (user_id, task) VALUES ($1, $2)', [user_id, task]);
+    //if successful, send success message
+    res.status(201).json({
+      "message": "Task added successfully"
+    })
+  } catch (error) {
+    //if there's an error, send back an error message
+    res.status(500).json({
+      "error": error.message,
+      "message": "Adding task was unsuccessful, please try again."
+    })
+  }
 });
 
-//this will handle requests to the path /todos/test
-// router.get('/test', (req, res) => {
-//   res.send("This is a test");
-// })
 
 //exporting the router to be used in main file
 module.exports = router;
